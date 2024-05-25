@@ -1,23 +1,17 @@
 package baguchan.slash_illager;
 
 
-import baguchan.slash_illager.entity.BladeMaster;
 import baguchan.slash_illager.message.NetworkManager;
 import baguchan.slash_illager.registry.ModEntityRegistry;
 import baguchan.slash_illager.registry.ModItemRegistry;
-import mods.flammpfeil.slashblade.event.BladeMotionEvent;
-import mods.flammpfeil.slashblade.network.MotionBroadcastMessage;
-import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.PacketDistributor;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(SlashIllager.MODID)
@@ -45,6 +39,7 @@ public class SlashIllager
 
     private void commonSetup(final FMLCommonSetupEvent event)
     {
+        Raid.RaiderType.create("blade_master", ModEntityRegistry.BLADE_MASTER.get(), new int[]{0, 0, 0, 0, 1, 1, 1, 2});
     }
 
     // Add the example block item to the building blocks tab

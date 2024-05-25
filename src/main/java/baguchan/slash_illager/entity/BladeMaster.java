@@ -3,8 +3,7 @@ package baguchan.slash_illager.entity;
 import baguchan.slash_illager.animation.VanillaConvertedVmdAnimation;
 import baguchan.slash_illager.entity.goal.SlashGoal;
 import com.google.common.collect.Maps;
-import dev.kosmx.playerAnim.api.layered.IAnimation;
-import dev.kosmx.playerAnim.impl.animation.AnimationApplier;
+import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -35,7 +34,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import mods.flammpfeil.slashblade.init.SBItems;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -45,6 +43,7 @@ public class BladeMaster extends AbstractIllager{
     public VanillaConvertedVmdAnimation currentAnimation;
     public BladeMaster(EntityType<? extends AbstractIllager> p_32105_, Level p_32106_) {
         super(p_32105_, p_32106_);
+        this.xpReward = 30;
     }
 
     protected void registerGoals() {
@@ -109,6 +108,10 @@ public class BladeMaster extends AbstractIllager{
         } else if (p_37844_ > raid.getNumGroups(Difficulty.EASY)) {
             map.put(Enchantments.SHARPNESS, 1);
         }
+        if (random.nextFloat() < 0.1F) {
+            map.put(Enchantments.SWEEPING_EDGE, 1);
+        }
+
         EnchantmentHelper.setEnchantments(map, stack);
 
         this.setItemSlot(EquipmentSlot.MAINHAND, stack);
