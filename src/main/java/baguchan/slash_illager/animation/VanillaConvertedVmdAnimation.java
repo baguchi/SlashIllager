@@ -14,7 +14,6 @@ import jp.nyatla.nymmd.types.MmdVector3;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.client.renderer.model.BladeMotionManager;
 import mods.flammpfeil.slashblade.util.TimeValueHelper;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.LazyOptional;
@@ -25,7 +24,6 @@ import org.joml.Vector3f;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.Math;
 import java.util.List;
 import java.util.Map;
 
@@ -150,6 +148,10 @@ public class VanillaConvertedVmdAnimation {
 
     public void stop() {
         this.isRunning = false;
+    }
+
+    public int getCurrentTick() {
+        return currentTick;
     }
 
     public boolean isActive() {

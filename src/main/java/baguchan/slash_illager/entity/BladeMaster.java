@@ -150,6 +150,9 @@ public class BladeMaster extends SpellcasterIllager {
         super.tick();
         if(this.level().isClientSide() && this.currentAnimation != null) {
             this.currentAnimation.tick();
+            if (!this.currentAnimation.isActive() && this.currentAnimation.getCurrentTick() > 0) {
+                this.currentAnimation = null;
+            }
         }
 
         if(this.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSlashBlade) {
