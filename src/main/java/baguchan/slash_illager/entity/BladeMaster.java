@@ -3,8 +3,12 @@ package baguchan.slash_illager.entity;
 import baguchan.slash_illager.animation.VanillaConvertedVmdAnimation;
 import baguchan.slash_illager.entity.goal.SlashGoal;
 import com.google.common.collect.Maps;
+import mods.flammpfeil.slashblade.SlashBlade;
+import mods.flammpfeil.slashblade.entity.EntityAbstractSummonedSword;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
+import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
+import mods.flammpfeil.slashblade.util.VectorHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -25,6 +29,7 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.monster.SpellcasterIllager;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
@@ -32,16 +37,23 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 
-public class BladeMaster extends AbstractIllager{
+import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
+
+public class BladeMaster extends SpellcasterIllager {
 
     public VanillaConvertedVmdAnimation currentAnimation;
-    public BladeMaster(EntityType<? extends AbstractIllager> p_32105_, Level p_32106_) {
+
+    public BladeMaster(EntityType<? extends BladeMaster> p_32105_, Level p_32106_) {
         super(p_32105_, p_32106_);
         this.xpReward = 30;
     }
@@ -49,9 +61,11 @@ public class BladeMaster extends AbstractIllager{
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
-       this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
+        this.goalSelector.addGoal(1, new SpellcasterIllager.SpellcasterCastingSpellGoal());
+        this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
         this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
-        this.goalSelector.addGoal(4, new SlashGoal(this));
+        this.goalSelector.addGoal(4, new BladeSpellGoal());
+        this.goalSelector.addGoal(5, new SlashGoal(this));
         this.targetSelector.addGoal(1, (new HurtByTargetGoal(this, Raider.class)).setAlertOthers());
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, AbstractVillager.class, true));
@@ -91,7 +105,7 @@ public class BladeMaster extends AbstractIllager{
         if (this.getCurrentRaid() == null) {
             ItemStack stack = new ItemStack(SBItems.slashblade);
             Map<Enchantment, Integer> map = Maps.newHashMap();
-            map.put(Enchantments.SHARPNESS, 1);
+            map.put(Enchantments.SWEEPING_EDGE, 1);
             EnchantmentHelper.setEnchantments(map, stack);
 
             this.setItemSlot(EquipmentSlot.MAINHAND, stack);
@@ -143,6 +157,11 @@ public class BladeMaster extends AbstractIllager{
         }
     }
 
+    @Override
+    protected SoundEvent getCastingSoundEvent() {
+        return SoundEvents.ILLUSIONER_CAST_SPELL;
+    }
+
     public void setCurrentAnimation(VanillaConvertedVmdAnimation currentAnimation) {
         this.currentAnimation = currentAnimation;
         this.currentAnimation.play();
@@ -150,5 +169,93 @@ public class BladeMaster extends AbstractIllager{
 
     public VanillaConvertedVmdAnimation getCurrentAnimation() {
         return currentAnimation;
+    }
+
+    public AbstractIllager.IllagerArmPose getArmPose() {
+        if (this.isCastingSpell()) {
+            return AbstractIllager.IllagerArmPose.SPELLCASTING;
+        } else if (this.isAggressive()) {
+            return IllagerArmPose.ATTACKING;
+        } else {
+            return this.isCelebrating() ? AbstractIllager.IllagerArmPose.CELEBRATING : AbstractIllager.IllagerArmPose.CROSSED;
+        }
+    }
+
+    class BladeSpellGoal extends SpellcasterIllager.SpellcasterUseSpellGoal {
+        public boolean canUse() {
+            if (!super.canUse()) {
+                return false;
+            } else {
+                LivingEntity livingentity = BladeMaster.this.getTarget();
+                return livingentity != null && BladeMaster.this.hasLineOfSight(livingentity);
+            }
+        }
+
+        @Override
+        public void start() {
+            super.start();
+
+            BladeMaster bladeMaster = BladeMaster.this;
+            boolean result = bladeMaster.getItemInHand(InteractionHand.MAIN_HAND).getCapability(BLADESTATE).map((state) -> {
+                state.updateComboSeq(bladeMaster, ComboStateRegistry.VOID_SLASH.getId());
+                return true;
+            }).orElse(false);
+
+            Vec3 start = bladeMaster.getEyePosition(1.0f);
+            Vec3 end = start.add(bladeMaster.getLookAngle().scale(40));
+            HitResult result2 = bladeMaster.level().clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, bladeMaster));
+            for (int i = 0; i < 5; i++) {
+                EntityAbstractSummonedSword ss = new EntityAbstractSummonedSword(SlashBlade.RegistryEvents.SummonedSword, bladeMaster.level());
+
+                bladeMaster.level().addFreshEntity(ss);
+
+                Vec3 pos = bladeMaster.getEyePosition(1.0f)
+                        .add(VectorHelper.getVectorForRotation(0.0f, bladeMaster.getViewYRot(1.0F) + 90).scale(bladeMaster.random.nextBoolean() ? 0.25 * i + 1.5F : -0.25 * i - 1.5F));
+                ss.setPos(pos.x, pos.y, pos.z);
+                ss.setDamage(2);
+                ss.setOwner(bladeMaster);
+                ss.setColor(0x333333);
+                ss.setRoll(bladeMaster.getRandom().nextFloat() * 360.0f);
+
+            }
+        }
+
+        protected int getCastingTime() {
+            return 60;
+        }
+
+        protected int getCastingInterval() {
+            return 240;
+        }
+
+        protected void performSpellCasting() {
+            BladeMaster bladeMaster = BladeMaster.this;
+            LivingEntity livingentity = BladeMaster.this.getTarget();
+
+            double d0 = livingentity.getX() - bladeMaster.getX();
+            double d1 = livingentity.getY() - bladeMaster.getY();
+            double d2 = livingentity.getZ() - bladeMaster.getZ();
+            double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+            List<EntityAbstractSummonedSword> list = bladeMaster.level().getEntitiesOfClass(EntityAbstractSummonedSword.class, bladeMaster.getBoundingBox().inflate(6.0F));
+
+            boolean alreadySummoned = !list.isEmpty();
+
+            if (alreadySummoned) {
+                //fire
+                list.stream().forEach(e -> {
+                    ((EntityAbstractSummonedSword) e).shoot(d0, d1, d2, 8.0F, 12.0F);
+
+                });
+            }
+        }
+
+        @Nullable
+        protected SoundEvent getSpellPrepareSound() {
+            return SoundEvents.ILLUSIONER_PREPARE_MIRROR;
+        }
+
+        protected SpellcasterIllager.IllagerSpell getSpell() {
+            return IllagerSpell.NONE;
+        }
     }
 }
