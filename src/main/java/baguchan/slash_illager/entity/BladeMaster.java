@@ -230,7 +230,7 @@ public class BladeMaster extends SpellcasterIllager {
         }
 
         protected int getCastingInterval() {
-            return 240;
+            return 420;
         }
 
         protected void performSpellCasting() {
