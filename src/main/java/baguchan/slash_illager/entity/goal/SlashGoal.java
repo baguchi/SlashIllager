@@ -1,6 +1,5 @@
 package baguchan.slash_illager.entity.goal;
 
-import baguchan.slash_illager.entity.BladeMaster;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
@@ -8,15 +7,16 @@ import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
 import static mods.flammpfeil.slashblade.item.ItemSlashBlade.INPUT_STATE;
 
 public class SlashGoal extends MeleeAttackGoal {
-	public final BladeMaster bladeMaster;
+	public final PathfinderMob bladeMaster;
 
-	public SlashGoal(BladeMaster bladeMaster) {
+	public SlashGoal(PathfinderMob bladeMaster) {
         super(bladeMaster, 1.1F, true);
         this.bladeMaster = bladeMaster;
 	}

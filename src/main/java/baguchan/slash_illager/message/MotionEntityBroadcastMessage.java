@@ -2,24 +2,19 @@ package baguchan.slash_illager.message;
 
 import baguchan.slash_illager.animation.VanillaConvertedVmdAnimation;
 import baguchan.slash_illager.client.ClientRenderingRegistry;
-import baguchan.slash_illager.entity.BladeMaster;
-import mods.flammpfeil.slashblade.event.BladeMotionEvent;
+import baguchan.slash_illager.entity.IBladeAnimation;
 import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.registry.combo.ComboState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
-import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -66,7 +61,7 @@ public class MotionEntityBroadcastMessage  {
 
         if(target == null) return;
 
-        if(!(target instanceof BladeMaster bladeMaster)) return;
+        if (!(target instanceof IBladeAnimation bladeMaster)) return;
         ComboState state = ComboStateRegistry.REGISTRY.get().getValue(ResourceLocation.tryParse(combo));
         if(state == null) return;
         ResourceLocation animation = ComboState.getRegistryKey(state);

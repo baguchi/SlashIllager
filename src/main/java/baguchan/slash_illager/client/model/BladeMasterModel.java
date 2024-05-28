@@ -3,33 +3,17 @@ package baguchan.slash_illager.client.model;// Made with Blockbench 4.9.4
 // Paste this class into your mod and generate all required imports
 
 
-import baguchan.slash_illager.animation.VanillaConvertedVmdAnimation;
 import baguchan.slash_illager.client.animation.HumanoidAnimations;
 import baguchan.slash_illager.client.animation.IllagerAnimations;
 import baguchan.slash_illager.entity.BladeMaster;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.kosmx.playerAnim.core.impl.AnimationProcessor;
-import dev.kosmx.playerAnim.core.util.SetableSupplier;
-import dev.kosmx.playerAnim.impl.IAnimatedPlayer;
-import dev.kosmx.playerAnim.impl.IPlayerModel;
-import dev.kosmx.playerAnim.impl.IUpperPartHelper;
-import dev.kosmx.playerAnim.impl.animation.AnimationApplier;
-import dev.kosmx.playerAnim.impl.animation.IBendHelper;
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.ArmedModel;
 import net.minecraft.client.model.HeadedModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-
-import java.util.Map;
 
 public class BladeMasterModel<T extends BladeMaster> extends HierarchicalModel<T> implements ArmedModel, HeadedModel {
 
@@ -111,17 +95,6 @@ public class BladeMasterModel<T extends BladeMaster> extends HierarchicalModel<T
 			entity.getCurrentAnimation().updatePart("rightLeg", this.right_leg);
 			entity.getCurrentAnimation().updatePart("torso", this.body);
 		}
-	}
-
-	protected void animateBlade(AnimationState p_233382_, VanillaConvertedVmdAnimation p_233383_, float p_233384_) {
-		this.animateBlade(p_233382_, p_233383_, p_233384_, 1.0F);
-	}
-
-	protected void animateBlade(AnimationState p_233386_, VanillaConvertedVmdAnimation p_233387_, float p_233388_, float p_233389_) {
-		p_233386_.updateTime(p_233388_, p_233389_);
-		/*p_233386_.ifStarted((p_233392_) -> {
-			KeyframeAnimations.animate(this, p_233387_, p_233392_.getAccumulatedTime(), 1.0F, ANIMATION_VECTOR_CACHE);
-		});*/
 	}
 
 	@Override

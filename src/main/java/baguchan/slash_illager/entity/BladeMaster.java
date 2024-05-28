@@ -49,7 +49,7 @@ import java.util.Map;
 
 import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
 
-public class BladeMaster extends SpellcasterIllager {
+public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
 
     public VanillaConvertedVmdAnimation currentAnimation;
 

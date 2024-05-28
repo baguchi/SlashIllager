@@ -1,0 +1,12 @@
+{
+  "package": "baguchan.slash_illager.mixin",
+  "mixins": [
+    "TargetSelectorMixin"
+  ],
+  "client": [
+  ],
+  "refmap": "slash_illager.refmap.json",
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8"
+}
