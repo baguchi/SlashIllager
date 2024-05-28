@@ -76,7 +76,7 @@ public class BladeMaster extends SpellcasterIllager {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.ARMOR, 8.0D).add(Attributes.FOLLOW_RANGE, 30.0D);
+        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.ARMOR, 8.0D).add(Attributes.FOLLOW_RANGE, 20.0D);
     }
 
     protected SoundEvent getAmbientSound() {
@@ -190,7 +190,7 @@ public class BladeMaster extends SpellcasterIllager {
                 return false;
             } else {
                 LivingEntity livingentity = BladeMaster.this.getTarget();
-                return livingentity != null && BladeMaster.this.hasLineOfSight(livingentity);
+                return livingentity != null && BladeMaster.this.hasLineOfSight(livingentity) && BladeMaster.this.distanceToSqr(livingentity) > 32F;
             }
         }
 
@@ -215,6 +215,8 @@ public class BladeMaster extends SpellcasterIllager {
                 Vec3 pos = bladeMaster.getEyePosition(1.0f)
                         .add(VectorHelper.getVectorForRotation(0.0f, bladeMaster.getViewYRot(1.0F) + 90).scale(bladeMaster.random.nextBoolean() ? 0.25 * i + 1.5F : -0.25 * i - 1.5F));
                 ss.setPos(pos.x, pos.y, pos.z);
+
+                ss.setYRot(bladeMaster.getYRot());
                 ss.setDamage(2);
                 ss.setOwner(bladeMaster);
                 ss.setColor(0x333333);
