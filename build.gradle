@@ -136,11 +136,8 @@ repositories {
         url = "https://modmaven.dev"
     }
     maven {
-        name = "Curse Maven"
-        url = "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
+        name 'MMMaven'
+        url 'https://raw.github.com/0999312/MMMaven/main/repository'
     }
     maven {
         url = "https://api.modrinth.com/maven"
@@ -168,7 +165,7 @@ dependencies {
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
-    implementation fg.deobf("curse.maven:slashblade-resharped-1022428:5375320")
+    implementation fg.deobf("mods.flammpfeil.slashblade:SlashBlade_Resharped:${slash_blade_version}")
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar

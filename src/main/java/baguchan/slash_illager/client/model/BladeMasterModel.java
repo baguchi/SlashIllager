@@ -83,7 +83,7 @@ public class BladeMasterModel<T extends BladeMaster> extends HierarchicalModel<T
 			}
 		}
 
-		if (entity.isCelebrating()) {
+		if (entity.isCelebrating() || entity.isCastingSpell()) {
 			this.animateWalk(IllagerAnimations.CEREBRATE, ageInTicks, 1, 1, 1);
 
 		}

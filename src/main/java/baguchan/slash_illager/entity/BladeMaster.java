@@ -1,13 +1,13 @@
 package baguchan.slash_illager.entity;
 
 import baguchan.slash_illager.animation.VanillaConvertedVmdAnimation;
+import baguchan.slash_illager.entity.goal.JudgementCutGoal;
 import baguchan.slash_illager.entity.goal.SlashGoal;
 import com.google.common.collect.Maps;
 import mods.flammpfeil.slashblade.SlashBlade;
 import mods.flammpfeil.slashblade.entity.EntityAbstractSummonedSword;
 import mods.flammpfeil.slashblade.init.SBItems;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.registry.ComboStateRegistry;
 import mods.flammpfeil.slashblade.util.VectorHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvent;
@@ -47,8 +47,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
-
 public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
 
     public VanillaConvertedVmdAnimation currentAnimation;
@@ -61,6 +59,8 @@ public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
     protected void registerGoals() {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
+
+        this.goalSelector.addGoal(1, new JudgementCutGoal(this));
         this.goalSelector.addGoal(1, new SpellcasterIllager.SpellcasterCastingSpellGoal());
         this.goalSelector.addGoal(2, new AbstractIllager.RaiderOpenDoorGoal(this));
         this.goalSelector.addGoal(3, new Raider.HoldGroundAttackGoal(this, 10.0F));
@@ -156,7 +156,7 @@ public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
         }
 
         if(this.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ItemSlashBlade) {
-            this.getItemInHand(InteractionHand.MAIN_HAND).inventoryTick(this.level(), this, 0, false);
+            this.getItemInHand(InteractionHand.MAIN_HAND).inventoryTick(this.level(), this, 0, true);
         }
     }
 
@@ -190,7 +190,7 @@ public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
                 return false;
             } else {
                 LivingEntity livingentity = BladeMaster.this.getTarget();
-                return livingentity != null && BladeMaster.this.hasLineOfSight(livingentity) && BladeMaster.this.distanceToSqr(livingentity) > 32F;
+                return livingentity != null && BladeMaster.this.hasLineOfSight(livingentity) && BladeMaster.this.distanceToSqr(livingentity) > 64F;
             }
         }
 
@@ -199,10 +199,6 @@ public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
             super.start();
 
             BladeMaster bladeMaster = BladeMaster.this;
-            boolean result = bladeMaster.getItemInHand(InteractionHand.MAIN_HAND).getCapability(BLADESTATE).map((state) -> {
-                state.updateComboSeq(bladeMaster, ComboStateRegistry.VOID_SLASH.getId());
-                return true;
-            }).orElse(false);
 
             Vec3 start = bladeMaster.getEyePosition(1.0f);
             Vec3 end = start.add(bladeMaster.getLookAngle().scale(40));
