@@ -24,7 +24,7 @@ public class JudgementCutGoal extends Goal {
     public boolean canUse() {
         if (this.cooldown <= 0) {
 
-            if (!this.bladeMaster.isCastingSpell() && this.bladeMaster.getTarget() != null) {
+            if (!this.bladeMaster.isCastingSpell() && this.bladeMaster.getTarget() != null && this.bladeMaster.getTarget().isAlive()) {
 
 
                 if (this.bladeMaster.distanceToSqr(this.bladeMaster.getTarget()) < 84) {

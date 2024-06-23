@@ -76,7 +76,7 @@ public class BladeMaster extends SpellcasterIllager implements IBladeAnimation {
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.ATTACK_DAMAGE, 3.0D).add(Attributes.ARMOR, 8.0D).add(Attributes.FOLLOW_RANGE, 20.0D);
+        return Monster.createMonsterAttributes().add(Attributes.MOVEMENT_SPEED, (double) 0.3F).add(Attributes.MAX_HEALTH, 50.0D).add(Attributes.ATTACK_DAMAGE, 1.0D).add(Attributes.ARMOR, 8.0D).add(Attributes.FOLLOW_RANGE, 20.0D);
     }
 
     protected SoundEvent getAmbientSound() {
